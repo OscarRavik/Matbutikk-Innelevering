@@ -9,8 +9,8 @@
 
 <nav>
     <img src="Bilder/logo.png" alt="handlevogn">
-    <button onclick="tomHandleVogn()">Ny handel</button>
-    <button onclick="tomHandleVogn()">Tøm handlekurv</button>
+    <h1>Matbutikken</h1>
+    <button onclick="tomHandleVogn()" id="navKnapp">Tøm handlekurv</button>
 </nav>
 
 
@@ -54,10 +54,13 @@
     <form action="" id="skjemaKunder">
         <label for="navn">Navn:</label>
         <input type="text" required id="navn">
+        <br>
         <label for="adresse">Adresse:</label>
         <input type="text" required  id="adresse">
+        <br>
         <label for="telefonnummer">Telefonnummer:</label>
         <input type="number" required id="telefonnummer">
+        <br>
         <button onclick="visKvitteringVarer()">Bestill</button>
     </form>
         <p>Hvis du er registrert fra før, finn navnet ditt under:</p>
@@ -131,7 +134,8 @@ var kvitteringVareEl = document.getElementById("kvitteringVarerInp");
 var registreringKundeKontainer = document.getElementById("registreringKunde");
 var kundeSelector = document.getElementById("selectKundeInp");
 var kundeSelectorSkjema = document.getElementById("selectKunde");
-var knapperEl = document.getElementById("knapper")
+var knapperEl = document.getElementById("knapper");
+var navKnappEl = document.getElementById("navKnapp");
 
     //referer til databaser
 var database = firebase.database();
@@ -271,6 +275,8 @@ var lokalKundeInfo = {};
         varerInp.style.display = "grid";
         knapperEl.style.display = "grid";
 
+        navKnappEl.innerHTML = `Tøm handlevogn`;    //Endrer navnet på knappen i navbaren tilbake til "tøm handlevogn"
+
     }
 
 
@@ -298,6 +304,8 @@ var lokalKundeInfo = {};
     //endrer css til kvittering div-elementet slik at det vises, bruker grid til å vise det slik
     varerInp.style.display = "none";
     knapperEl.style.display = "none";
+
+    navKnappEl.innerHTML = `Ny handel`; //Endrer navnet på knappen i navbaren til "ny handel"
     }
 
     //lyttefunksjon som lytter til kundedatabasen, og som insetter navnene til kundene som i option-elementer i selektoren
@@ -339,7 +347,7 @@ var lokalKundeInfo = {};
     }
 
     //Den andre lyttefunksjonen som kjører når informasjon blir lagt til den midlertidige kundedatabasen, og viser informasjonen
-    function visKvitteringKundeTo (event) {
+    function visKvitteringKundeTo(event) {
         event.preventDefault();
         var kundeNavnTo = kundeSelector.value;
         var adresseTo = lokalKundeInfo[kundeNavnTo].adresse;
@@ -362,6 +370,7 @@ var lokalKundeInfo = {};
         varerInp.style.display = "none";
         knapperEl.style.display = "none";
         kvitteringEl.style.display = "grid";
+        navKnappEl.innerHTML = `Ny handel`; //Endrer navnet på knappen i navbaren til "ny handel"
 
     }
 

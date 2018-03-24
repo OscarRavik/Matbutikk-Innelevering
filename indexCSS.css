@@ -26,7 +26,13 @@ body {
     display: flex;
     flex-direction: column;
 }
-
+button {
+    background-color: #f3f3f3;
+    border: 1px darkgray solid;
+}
+button:hover {
+    background-color: #d9d9d9;
+}
 
 nav {
     height: 100px;
@@ -36,7 +42,7 @@ nav {
     top: 0;
     left: 0;
     display: grid;
-    grid-template-columns: 1fr 100px 100px;
+    grid-template-columns: 100px 1fr 100px;
     border-bottom: solid 1px black;
 }
 
@@ -59,6 +65,9 @@ main{
     background-color: #e3e3e3;
     flex-grow: 1;
 }
+main button, main select {
+    border-radius: 5px;
+}
 
 #knapper {
     display: grid;
@@ -66,6 +75,15 @@ main{
     height: 40px;
     width: 100%;
 }
+#knapper button {
+    border-radius: 0;
+    border-left: none;
+}
+#knapper button:first-child {
+    border: 1px solid darkgray;
+}
+
+
 
 
 
@@ -130,6 +148,11 @@ main{
 }
 #registreringKunde p{
     text-align: center;
+    margin: 10px;
+}
+#registreringKunde button, #registreringKunde select{
+    width: 150px;
+    height: 30px;
     margin: 10px;
 }
 
@@ -215,4 +238,12 @@ footer p{
     .span1 {
         grid-column: span 2;
     }
+    nav h1{
+        display: none;
+    }
+    nav {
+        grid-template-columns: 1fr 100px;
+    }
 }
+
+
