@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Matbutikken</title>
+    <link rel="stylesheet" href="indexCSS.css">
+</head>
+<body>
+
+<nav>
+    <img src="Bilder/logo.png" alt="handlevogn">
+    <button onclick="tomHandleVogn()">Ny handel</button>
+    <button onclick="tomHandleVogn()">Tøm handlekurv</button>
+</nav>
+
+
+<main>
+
+    <div id="knapper">
+        <button onclick="visAlleVarer()" class="knapp">Alle varer etter kategori</button>
+        <button onclick="visPris()" class="knapp">Alle varer etter pris</button>
+        <button onclick="maksFemti()" class="knapp">Maks 50 kr</button>
+        <button onclick="visSnack()" class="knapp">Snacks</button>
+        <button onclick="visDrikke()" class="knapp">Drikke</button>
+        <button onclick="visMiddag()" class="knapp">Middag</button>
+    </div>
+
+    <div id="varerInp">
+
+    </div>
+
+
+
+        <h1 id="handlevognOverskrift">Handlevogn</h1>
+    <div id="handlevognDiv">
+        <table id="handlevogn">
+            <th>
+                <tr>
+                    <td><img src="Bilder/handlevognFull.png" alt="Full Handlevogn"></td>
+                    <td>Navn</td>
+                    <td>Ingredienser</td>
+                    <td>Pris</td>
+                </tr>
+            </th>
+            <tbody id="handlevognEl">
+
+            </tbody>
+        </table>
+    </div>
+
+
+    <div id="registreringKunde">
+        <h1>Registrer deg og fullfør handelen</h1>
+    <form action="" id="skjemaKunder">
+        <label for="navn">Navn:</label>
+        <input type="text" required id="navn">
+        <label for="adresse">Adresse:</label>
+        <input type="text" required  id="adresse">
+        <label for="telefonnummer">Telefonnummer:</label>
+        <input type="number" required id="telefonnummer">
+        <button onclick="visKvitteringVarer()">Bestill</button>
+    </form>
+        <p>Hvis du er registrert fra før, finn navnet ditt under:</p>
+        <form action="" id="selectKunde">
+            <select id="selectKundeInp"></select>
+            <button>Bestill</button>
+        </form>
+    </div>
+
+    <div id="kvittering">
+        <h1 class="span2">Kvittering</h1>
+        <div class="span1">
+            <h2>Kundeinformasjon:</h2>
+            <div id="kvitteringKundeInfo"></div>
+        </div>
+        <div id="kvitteringVarer" class="span1">
+            <h2>Varer:</h2>
+            <div id="scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <td><img src="Bilder/handlevognFull.png" alt="Full Handlevogn"></td>
+                            <td>Navn</td>
+                            <td>Kategori</td>
+                            <td>Pris</td>
+                        </tr>
+                    </thead>
+                    <tbody id="kvitteringVarerInp"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>Denne nettsiden er laget av Oscar Ravik 2STA 23.3.2018</p>
+</footer>
+
+
+
+
+<script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyA4lJkQfJc-j3N0A_b4d39rda6ethzA2pI",
+        authDomain: "matbutikken-957d6.firebaseapp.com",
+        databaseURL: "https://matbutikken-957d6.firebaseio.com",
+        projectId: "matbutikken-957d6",
+        storageBucket: "",
+        messagingSenderId: "932077966331"
+    };
+    firebase.initializeApp(config);
+</script>
+
+
+<script>
+
+    // henter elementer fra hmtl
+var varerInp = document.getElementById("varerInp");
+var skjemaKunderEl = document.getElementById("skjemaKunder");
+var navnInp = document.getElementById("navn");
+var adresseInp = document.getElementById("adresse");
+var telefonInp = document.getElementById("telefonnummer");
+var kvitteringEl = document.getElementById("kvittering");
+var handlevognTabell = document.getElementById("handlevogn");
+var handlevognOverskrift = document.getElementById("handlevognOverskrift");
+var handlevognEl = document.getElementById("handlevognEl");
+var kvitteringKundeInfoEl = document.getElementById("kvitteringKundeInfo");
+var kvitteringVareEl = document.getElementById("kvitteringVarerInp");
+var registreringKundeKontainer = document.getElementById("registreringKunde");
+var kundeSelector = document.getElementById("selectKundeInp");
+var kundeSelectorSkjema = document.getElementById("selectKunde");
+var knapperEl = document.getElementById("knapper")
+
+    //referer til databaser
+var database = firebase.database();
+var matVarer = database.ref("matvarer");
+var kunderDatabase = database.ref("kunder");
+var handlevognDatabase = database.ref("handlevogn");
+
+    //lokale databaser som jeg bruker med fremmednøkler
+var lokalVareInfo = {};
+var lokalKundeInfo = {};
+
+
+    //Viser varene som egne artikler som blir plassert i et div-element som er satt opp som et grid, artiklen har en knapp
+    //som gjør at man kan besille varen
+    function visVarer (snapshot) {
+    var vare = snapshot.val();
+    var navn = snapshot.key;
+
+    varerInp.innerHTML += `
+        <article>
+        <img src="${vare.bilde}" alt="vare">
+        <h2>${navn}</h2>
+        <h3>Pris: ${vare.pris}</h3>
+        <h4>Ingredienser: <br> ${vare.ingredienser}</h4>
+        <button onclick="leggTilIHandlevogn('${navn}')">Kjøp</button>
+        </article>
+        `
+
+    console.log("Viser en vare");
+
+  lokalVareInfo[navn] = vare; //lagrer variablen vare som en lokal database
+
+  //  LokalVareInfo[navn] = vare;
+}
+
+    //Funksjonene kjører når knappene over varene blir trykket på. Innholdet i varerInp (div) blir fjernet, og det blir
+    //Sendt inn varer med veriden i "equalTo".
+    function visSnack() {
+        varerInp.innerHTML = "";
+        matVarer
+            .orderByChild("kategori")
+            .equalTo("Snack")
+            .on("child_added", visVarer);
+    }
+    function visMiddag() {
+        varerInp.innerHTML = "";
+        matVarer
+            .orderByChild("kategori")
+            .equalTo("Middag")
+            .on("child_added", visVarer);
+    }
+    function visDrikke() {
+        varerInp.innerHTML = "";
+        matVarer
+            .orderByChild("kategori")
+            .equalTo("Drikke")
+            .on("child_added", visVarer)
+    }
+    //Funksjonen som kjører når siden lastes inn, sorterer elementene etter kategori
+    function visAlleVarer() {
+        varerInp.innerHTML = "";
+        matVarer
+            .orderByChild("kategori")
+            .on("child_added", visVarer);
+    }
+    //Fuksjonen blir aktivert av en knapp, sorterer varene etter pris.
+    function visPris() {
+        varerInp.innerHTML = "";
+        matVarer
+            .orderByChild("pris")
+            .on("child_added", visVarer);
+    }
+    //Begrenser maksimal pris på en vare til 50 kr
+    function maksFemti() {
+        varerInp.innerHTML = "";
+        matVarer
+            .orderByChild("pris")
+            .endAt(50)
+            .on("child_added", visVarer);
+    }
+
+
+
+    //En lyttefunksjon som legger til varen i handlevognen, og bruker navn variabelen fra visVarer funksjonen til å finne varenavnet.
+    function leggTilIHandlevogn(navn) {
+        handlevognDatabase.push (
+            {
+                "vare" : navn
+            }
+
+        );
+
+        console.log("Lagt til i handlevogn");
+    }
+
+    //En lyttefunksjon som viser varene i handlevognen i en tabell, settes derfor inn i <tr> elementer
+    function visHandlevogn(snapshot){
+        var vareNavn = snapshot.val().vare;
+        var pris = lokalVareInfo[vareNavn].pris;
+        //henter informasjon fra den lokale kundedatabasen ved å bruke primærnøklen til varen
+        var ingredienser = lokalVareInfo[vareNavn].ingredienser;
+
+        handlevognEl.innerHTML += `
+<tr>
+     <td><img src="Bilder/logo${vareNavn}.png" alt="Vare"></td>
+     <td>${vareNavn}</td>
+     <td>${ingredienser}</td>
+     <td>${pris}</td>
+</tr>
+        `;
+
+
+
+
+        console.log("Viser en vare i handlevognen");
+        handlevognTabell.style.display = "table"; //viser handlevognen som i CSS filen har display: none;
+        handlevognOverskrift.style.display = "block"; //viser overskriften som i CSS filen har display: none;
+        registreringKundeKontainer.style.display = "block";
+        //viser skjemaet som registrerer kunder som i CSS filen har display: none;
+
+    }
+
+    //en lyttefunksjon som Tømmer handlevognen, og som setter display: none; til flere elementer, slik at de ikke vises fordi handlevognen er tom.
+    function tomHandleVogn() {
+        handlevognDatabase.remove(); //tømmer handlevogndatabasen
+
+        console.log("Tømte handlekurv");
+
+        handlevognEl.innerHTML = ""; //Tømmer handlevogn elementet i html
+        kvitteringVareEl.innerHTML = ""; //Fjerner varene i kvitteringen i html
+
+        handlevognTabell.style.display = "none";
+        handlevognOverskrift.style.display = "none";
+        registreringKundeKontainer.style.display = "none";
+        kvitteringEl.style.display = "none";
+
+        varerInp.style.display = "grid";
+        knapperEl.style.display = "grid";
+
+    }
+
+
+
+    //en lyttefunksjon som registrerer kundene med deres navn og opplysniger
+    function registrerKunder(event) {
+    event.preventDefault();
+
+    var navn = navnInp.value;
+    var adresse = adresseInp.value;
+    var telefon = telefonInp.value;
+
+    //lager en ny database som heter "kunder" der primernøklene er navnet til kundene
+    var nyKunde = database.ref("kunder/" + navn);
+
+
+
+    nyKunde.set(
+        {
+            "adresse": adresse,
+            "telefonnummer": telefon
+        }
+    );
+    kvitteringEl.style.display = "grid";
+    //endrer css til kvittering div-elementet slik at det vises, bruker grid til å vise det slik
+    varerInp.style.display = "none";
+    knapperEl.style.display = "none";
+    }
+
+    //lyttefunksjon som lytter til kundedatabasen, og som insetter navnene til kundene som i option-elementer i selektoren
+    function hentKunde(snapshot) {
+        var kundeNavn = snapshot.key;
+        var kundeInfo = snapshot.val();
+
+        kundeSelector.innerHTML += `
+        <option value="${kundeNavn}">${kundeNavn}</option>
+        `;
+
+        lokalKundeInfo[kundeNavn] = kundeInfo; //lager en lokal database som inneholder informasjonen til kundene
+
+        console.log("Kunde lagt til i selector");
+    }
+
+
+
+    //En lyttefunksjon som kjører når informasjon blir lagt til kunder databasen, og viser informasjonen
+    function visKvitteringKunde(snapshot) {
+        var navnEn = snapshot.key;
+        var kundeinformasjonEn = snapshot.val();
+
+        kvitteringKundeInfoEl.innerHTML = `
+        <h2> Navn: ${navnEn} </h2>
+        <h3> Adresse: ${kundeinformasjonEn.adresse}</h3>
+        <h3> Telefonnummer: ${kundeinformasjonEn.telefonnummer}</h3>
+        `;
+
+        console.log("Viser kundeinfo fra Skjema");
+
+        handlevognEl.innerHTML = ""; //Tømmer handlevogn elementet i html
+        handlevognDatabase.remove(); //tømmer handlevogndatabasen
+        handlevognTabell.style.display = "none";
+        handlevognOverskrift.style.display = "none";
+        registreringKundeKontainer.style.display = "none";
+
+
+    }
+
+    //Den andre lyttefunksjonen som kjører når informasjon blir lagt til den midlertidige kundedatabasen, og viser informasjonen
+    function visKvitteringKundeTo (event) {
+        event.preventDefault();
+        var kundeNavnTo = kundeSelector.value;
+        var adresseTo = lokalKundeInfo[kundeNavnTo].adresse;
+        //informasjonen hentes fra den lokale databasen, kundenavnet som finnes i selectoren brukes som fremmednøkkel
+        var telefonTo = lokalKundeInfo[kundeNavnTo].telefonnummer;
+
+        kvitteringKundeInfoEl.innerHTML = `
+        <h2> Navn: ${kundeNavnTo} </h2>
+        <h3> Adresse: ${adresseTo}</h3>
+        <h3> Telefonnummer: ${telefonTo}</h3>
+        `;
+
+        console.log("Viser kundeinfo fra selector");
+
+        handlevognEl.innerHTML = ""; //Tømmer handlevogn elementet i html
+        handlevognDatabase.remove(); //tømmer handlevogndatabasen
+        handlevognTabell.style.display = "none";
+        handlevognOverskrift.style.display = "none";
+        registreringKundeKontainer.style.display = "none";
+        varerInp.style.display = "none";
+        knapperEl.style.display = "none";
+        kvitteringEl.style.display = "grid";
+
+    }
+
+    //Lyttefunksjon som hører på handlekurvdatabasen, viser varene i kvitteringen
+    function visKvitteringVarer(snapshot){
+        var vareInfo = snapshot.val();
+        var vareNavn = vareInfo.vare;
+        var pris = lokalVareInfo[vareNavn].pris; //bruker den lokale databasen, varenavnet er fremmednøkkelen
+        var bilde = lokalVareInfo[vareNavn].bilde;
+        var kategori = lokalVareInfo[vareNavn].kategori;
+
+        kvitteringVareEl.innerHTML += `
+<tr>
+     <td><img src="${bilde}" alt="Vare"></td>
+     <td>${vareNavn}</td>
+     <td>${kategori}</td>
+     <td>${pris}</td>
+</tr>
+        `;
+
+        console.log("Viser vareinfo fra skjema");
+
+    }
+
+
+//Kjører når siden laster inn, gjør at jeg kan velge at varene skal sorteres i kategorier
+    document.onload = visAlleVarer();
+
+//Kjører funksjonen registrer kunde når skjema blir sendt
+    skjemaKunderEl.onsubmit = registrerKunder;
+
+//Funksjonen velgKunde kjører når skjemaet blir sendt
+    kundeSelectorSkjema.onsubmit = visKvitteringKundeTo;
+
+
+//Når det blir lagt til informasjon til kundedatabasen kjører bege funkjsonene, den ene viser kundeinformasjonen i kvitteringen, mens
+//Den andre legger til options/valgmuligheter i selectoren der man kan velge blandt tidligere kunder
+    kunderDatabase.on("child_added", visKvitteringKunde);
+    kunderDatabase.on("child_added", hentKunde);
+
+//Når det blir sendt informasjon til den midlertidige databasen vil informasjonen til kunden vises i kvitteringen
+
+
+//Når det blir lagt til varer i handlevognen, dvs handlevogndatabasen vil disse funksjonene kjøre
+    handlevognDatabase.on("child_added", visHandlevogn);
+    handlevognDatabase.on("child_added", visKvitteringVarer);
+
+//Hver gang man laster inn siden vil denne funksjonen kjøres, som tømmer handlekurven og den midlertidige databasen,
+//Fjerner html elementer og setter display: none; på flere elementer
+    document.onload = tomHandleVogn();
+
+
+
+</script>
+
+</body>
+</html>

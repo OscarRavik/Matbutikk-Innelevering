@@ -1,0 +1,115 @@
+{
+  "matvarer": {
+    "Litago": {
+      "pris": 20,
+      "kategori": "Drikke",
+      "ingredienser": [
+        "Melk",
+        "Kakao",
+        "Laktose"
+      ],
+      "bilde" : "Bilder/litago.png"
+    },
+    "Hamburger": {
+      "pris": 99,
+      "kategori": "Middag",
+      "ingredienser": [
+        "Kjøtt"
+      ],
+      "bilde" : "Bilder/hamburger.png"
+    },
+    "Lefse": {
+      "pris": 16,
+      "kategori": "Snack",
+      "ingredienser": [
+        "Mel",
+        "Sukker",
+        "Kanel"
+      ],
+      "bilde" : "Bilder/lefse.png"
+    },
+    "Japp": {
+      "pris": 18,
+      "kategori": "Snack",
+      "ingredienser": [
+        "Sjokolade",
+        "Sukker",
+        "Karamell"
+      ],
+      "bilde" : "Bilder/japp.png"
+    },
+    "Banan": {
+      "pris": 5,
+      "kategori": "Snack",
+      "ingredienser": [
+        "Banan"
+      ],
+      "bilde" : "Bilder/banan.png"
+    },
+    "Skittles": {
+      "pris": 23,
+      "kategori": "Snack",
+      "ingredienser": [
+        "Sukker",
+        "Gluten",
+        "Fargestoffer"
+      ],
+      "bilde" : "Bilder/skittles.jpg"
+    },
+    "Kebab": {
+      "pris": 135,
+      "kategori": "Middag",
+      "ingredienser": [
+        "Kjøtt",
+        "Gluten",
+        "Saus"
+      ],
+      "bilde" : "Bilder/kebab.png"
+    },
+    "MountainDew": {
+      "pris": 22,
+      "kategori": "Drikke",
+      "ingredienser": [
+        "Sukker",
+        "Koffein",
+        "Energi"
+      ],
+      "bilde" : "Bilder/mountainDew.png"
+    },
+    "Pizza": {
+      "pris": 150,
+      "kategori": "Middag",
+      "ingredienser": [
+        "Pepperoni",
+        "Gluten",
+        "Sauce"
+      ],
+      "bilde" : "Bilder/pizza.png"
+    },
+    "Pølse": {
+      "pris": 25,
+      "kategori": "Middag",
+      "ingredienser": [
+        "Pølsekjøtt",
+        "Brød"
+      ],
+      "bilde" : "Bilder/pølse.png"
+    },
+    "Kakao": {
+      "pris": 20,
+      "kategori": "Drikke",
+      "ingredienser": [
+        "Sjokolade"
+      ],
+      "bilde" : "Bilder/kakao.png"
+    },
+    "Cola": {
+      "pris": 19,
+      "kategori": "Drikke",
+      "ingredienser": [
+        "Koke"
+      ],
+      "bilde" : "Bilder/cola.png"
+    }
+  }
+}

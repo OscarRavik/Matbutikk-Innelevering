@@ -1,0 +1,218 @@
+*{
+    margin:0;
+    box-sizing:border-box;
+    padding:0;
+    Font-family:sans-serif;
+}
+h1 {
+    text-align: center;
+    font-size: 40px;
+    margin: 40px;
+}
+h2 {
+    margin: 20px;
+    text-align: center;
+}
+h3 {
+    text-align: center;
+}
+
+html {
+    height: 100%;
+}
+body {
+    background-color: #4468B0;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+nav {
+    height: 100px;
+    background-color: #4468B0;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: 1fr 100px 100px;
+    border-bottom: solid 1px black;
+}
+
+
+
+nav img {
+    width: 70px;
+    margin: 15px;
+}
+
+nav button {
+    width: 80px;
+    height: 60px;
+    margin-top: 20px;
+    margin-right: 20px;
+}
+
+main{
+    padding: 140px 40px 40px 40px;
+    background-color: #e3e3e3;
+    flex-grow: 1;
+}
+
+#knapper {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    height: 40px;
+    width: 100%;
+}
+
+
+
+
+#varerInp {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+#varerInp img {
+    width: 140px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+#varerInp button {
+    width: 100px;
+    height: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+#varerInp h2, #varerInp h3, #varerInp h4 {
+    margin: 10px;
+    text-align: center;
+}
+#varerInp h2 {
+    font-size: 40px;
+}
+#varerInp article {
+    margin-top: 30px;
+}
+
+
+#handlevognOverskrift {
+    display: none;
+}
+#handlevogn {
+    width: 100%;
+    border-collapse: collapse;
+    display: none;
+}
+#handlevognDiv {
+    max-height: 378px;
+    overflow: auto;
+}
+
+#handlevogn tbody tr:nth-child(odd){
+    background-color: darkgray;
+}
+#handlevogn td {
+    border: none;
+}
+
+
+#handlevogn img{
+    width: 50px;
+}
+
+
+#registreringKunde {
+    display: none;
+}
+#registreringKunde p{
+    text-align: center;
+    margin: 10px;
+}
+
+#skjemaKunder {
+    text-align: center;
+}
+
+#selectKunde {
+    text-align: center;
+}
+
+
+#kvittering {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 0 40px 0 40px;
+}
+
+#kvitteringVarer img {
+    width: 50px;
+}
+#kvitteringVarer table {
+    width: 100%;
+    border-collapse: collapse;
+    padding: 30px;
+}
+
+#kvittering h1 {
+    margin: 0;
+}
+
+
+#kvitteringVarer tbody tr:nth-child(odd) {
+    background-color: darkgray;
+}
+
+#scroll {
+    max-height: 324px;
+    overflow: auto;
+}
+
+footer {
+    background-color: #4468B0;
+    height: 40px;
+    border-top: solid 1px black;
+
+}
+
+footer p{
+    text-align: center;
+    display: block;
+    font-size: 20px;
+    line-height: 30px;
+}
+
+
+.span2 {
+    grid-column: span 2;
+}
+.span1 {
+    grid-column: span 1;
+}
+
+
+@media (max-width: 1100px) {
+    #varerInp {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media (max-width: 900px) {
+    #varerInp {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 600px) {
+    #varerInp {
+        grid-template-columns: 1fr;
+    }
+    #knapper {
+        grid-template-columns: 1fr;
+        height: 200px;
+    }
+    .span1 {
+        grid-column: span 2;
+    }
+}
