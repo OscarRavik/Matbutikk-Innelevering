@@ -10,19 +10,21 @@
 <nav>
     <img src="Bilder/logo.png" alt="handlevogn">
     <h1>Matbutikken</h1>
+    <!-- Knapp som kjører funksjonen tomHandleVogn, og som endrer navn når kvitteringen vises-->
     <button onclick="tomHandleVogn()" id="navKnapp">Tøm handlekurv</button>
 </nav>
 
 
 <main>
 
+    <!-- knapper som sorterer varene -->
     <div id="knapper">
-        <button onclick="visAlleVarer()" class="knapp">Alle varer etter kategori</button>
-        <button onclick="visPris()" class="knapp">Alle varer etter pris</button>
-        <button onclick="maksFemti()" class="knapp">Maks 50 kr</button>
-        <button onclick="visSnack()" class="knapp">Snacks</button>
-        <button onclick="visDrikke()" class="knapp">Drikke</button>
-        <button onclick="visMiddag()" class="knapp">Middag</button>
+        <button onclick="visAlleVarer()" class="knapp" id="knappAlle">Alle varer etter kategori</button>
+        <button onclick="visPris()" class="knapp" id="knappPris">Alle varer etter pris</button>
+        <button onclick="maksFemti()" class="knapp" id="knappFemti">Maks 50 kr</button>
+        <button onclick="visSnack()" class="knapp" id="knappSnack">Snacks</button>
+        <button onclick="visDrikke()" class="knapp" id="knappDrikke">Drikke</button>
+        <button onclick="visMiddag()" class="knapp" id="knappMiddag">Middag</button>
     </div>
 
     <div id="varerInp">
@@ -38,10 +40,11 @@
                 <tr>
                     <td><img src="Bilder/handlevognFull.png" alt="Full Handlevogn"></td>
                     <td>Navn</td>
-                    <td>Ingredienser</td>
+                    <td class="fjernElementTabell">Ingredienser</td>
                     <td>Pris</td>
                 </tr>
             </th>
+            <!-- tbody-elementet varene blir puttet inn i-->
             <tbody id="handlevognEl">
 
             </tbody>
@@ -49,8 +52,10 @@
     </div>
 
 
+
     <div id="registreringKunde">
         <h1>Registrer deg og fullfør handelen</h1>
+        <!--Skjemaet som registrerer kunden-->
     <form action="" id="skjemaKunder">
         <label for="navn">Navn:</label>
         <input type="text" required id="navn">
@@ -61,9 +66,10 @@
         <label for="telefonnummer">Telefonnummer:</label>
         <input type="number" required id="telefonnummer">
         <br>
-        <button onclick="visKvitteringVarer()">Bestill</button>
+        <button>Bestill</button>
     </form>
-        <p>Hvis du er registrert fra før, finn navnet ditt under:</p>
+        <p><b>Hvis du er registrert fra før, finn navnet ditt under:</b></p>
+        <!--Skjemaet der kunder som har registrert seg før kan finne navnet sitt og registrere seg med det-->
         <form action="" id="selectKunde">
             <select id="selectKundeInp"></select>
             <button>Bestill</button>
@@ -82,12 +88,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <td><img src="Bilder/handlevognFull.png" alt="Full Handlevogn"></td>
+                            <td></td>
                             <td>Navn</td>
-                            <td>Kategori</td>
+                            <td class="fjernElementTabell">Kategori</td>
                             <td>Pris</td>
                         </tr>
                     </thead>
+                    <!-- tbody-element varene i kvitteringen blir puttet inn i-->
                     <tbody id="kvitteringVarerInp"></tbody>
                 </table>
             </div>
@@ -136,6 +143,13 @@ var kundeSelector = document.getElementById("selectKundeInp");
 var kundeSelectorSkjema = document.getElementById("selectKunde");
 var knapperEl = document.getElementById("knapper");
 var navKnappEl = document.getElementById("navKnapp");
+var knappAlleEl = document.getElementById("knappAlle");
+var knappPrisEl = document.getElementById("knappPris");
+var knappFemtiEl = document.getElementById("knappFemti");
+var knappSnackEl = document.getElementById("knappSnack");
+var knappDrikkeEl = document.getElementById("knappDrikke");
+var knappMiddagEl = document.getElementById("knappMiddag");
+var alleKnapperEl = document.getElementsByClassName("knapp");
 
     //referer til databaser
 var database = firebase.database();
@@ -148,12 +162,15 @@ var lokalVareInfo = {};
 var lokalKundeInfo = {};
 
 
-    //Viser varene som egne artikler som blir plassert i et div-element som er satt opp som et grid, artiklen har en knapp
-    //som gjør at man kan besille varen
+    //En lyttefunksjon som hører på varedatabasen som viser varene som egne artikler som blir plassert i et div-element
+    //som er satt opp som et grid, artiklen har en knapp som gjør at man kan besille varen
     function visVarer (snapshot) {
+    //henter dataene til varene
     var vare = snapshot.val();
+    //henter primærnøklen til varen
     var navn = snapshot.key;
 
+    //legger inn informasjon i vareInp-elementet
     varerInp.innerHTML += `
         <article>
         <img src="${vare.bilde}" alt="vare">
@@ -166,55 +183,116 @@ var lokalKundeInfo = {};
 
     console.log("Viser en vare");
 
-  lokalVareInfo[navn] = vare; //lagrer variablen vare som en lokal database
+  lokalVareInfo[navn] = vare; //lagrer variablen vare (som inneholder informasjonen om varen) som en lokal database
 
   //  LokalVareInfo[navn] = vare;
 }
 
-    //Funksjonene kjører når knappene over varene blir trykket på. Innholdet i varerInp (div) blir fjernet, og det blir
-    //Sendt inn varer med veriden i "equalTo".
+    //Funksjonene kjører når knappene over varene blir trykket på. Innholdet i varerInp (div) blir fjernet
+    //Varene sorteres etter verdien til kategorien, og den viser de varene som har kategori er lik det som står i equalTo
     function visSnack() {
+        //fjerner alle varene som er i vareInp-elementet
         varerInp.innerHTML = "";
         matVarer
+            //sorterer dem etter kategori
             .orderByChild("kategori")
+            //viser varene som har "kategori" : Snack
             .equalTo("Snack")
+            //kjører funksjonen vis varer når det blir lagt til varer i matVarer databasen
             .on("child_added", visVarer);
+
+        //Gjør så man kan se hvilken knapp som sist ble brukt
+        resetKnapp();
+        knappSnackEl.style.backgroundColor = "#d9d9d9";
+
+
     }
     function visMiddag() {
+        //fjerner alle varene som er i vareInp-elementet
         varerInp.innerHTML = "";
         matVarer
+            //sorterer dem etter kategori
             .orderByChild("kategori")
+            //viser varene som har "kategori" : Middag
             .equalTo("Middag")
+            //kjører funksjonen vis varer når det blir lagt til varer i matVarer databasen
             .on("child_added", visVarer);
+
+        //Gjør så man kan se hvilken knapp som sist ble brukt
+        resetKnapp();
+        knappMiddagEl.style.backgroundColor = "#d9d9d9";
+
+
     }
     function visDrikke() {
+        //fjerner alle varene som er i vareInp-elementet
         varerInp.innerHTML = "";
         matVarer
+            //sorterer dem etter kategori
             .orderByChild("kategori")
+            //viser varene som har "kategori" : Drikke
             .equalTo("Drikke")
+            //kjører funksjonen vis varer når det blir lagt til varer i matVarer databasen
             .on("child_added", visVarer)
+
+        //Gjør så man kan se hvilken knapp som sist ble brukt
+        resetKnapp();
+        knappDrikkeEl.style.backgroundColor = "#d9d9d9";
     }
     //Funksjonen som kjører når siden lastes inn, sorterer elementene etter kategori
     function visAlleVarer() {
+        //fjerner alle varene som er i vareInp-elementet
         varerInp.innerHTML = "";
         matVarer
+            //sorterer dem etter kategori
             .orderByChild("kategori")
+            //kjører funksjonen vis varer når det blir lagt til varer i matVarer databasen
             .on("child_added", visVarer);
+
+        //Gjør så man kan se hvilken knapp som sist ble brukt
+        resetKnapp();
+        knappAlleEl.style.backgroundColor = "#d9d9d9";
     }
     //Fuksjonen blir aktivert av en knapp, sorterer varene etter pris.
     function visPris() {
+        //fjerner alle varene som er i vareInp-elementet
         varerInp.innerHTML = "";
         matVarer
+            //sorterer dem etter pris
             .orderByChild("pris")
+            //kjører funksjonen vis varer når det blir lagt til varer i matVarer databasen
             .on("child_added", visVarer);
+
+        //Gjør så man kan se hvilken knapp som sist ble brukt
+        resetKnapp();
+        knappPrisEl.style.backgroundColor = "#d9d9d9";
     }
     //Begrenser maksimal pris på en vare til 50 kr
     function maksFemti() {
+        //fjerner alle varene som er i vareInp-elementet
         varerInp.innerHTML = "";
         matVarer
+            //sorterer dem etter kategori
             .orderByChild("pris")
+            //begrenser verdien til pris til maks 50
             .endAt(50)
+            //kjører funksjonen vis varer når det blir lagt til varer i matVarer databasen
             .on("child_added", visVarer);
+
+        //Gjør så man kan se hvilken knapp som sist ble brukt
+        resetKnapp();
+        knappFemtiEl.style.backgroundColor = "#d9d9d9";
+
+    }
+
+    //Endrer bakgrunnsfargen til knappene tilbake til slik de var ved start
+    function resetKnapp() {
+        knappSnackEl.style.backgroundColor = "";
+        knappMiddagEl.style.backgroundColor = "";
+        knappDrikkeEl.style.backgroundColor = "";
+        knappAlleEl.style.backgroundColor = "";
+        knappFemtiEl.style.backgroundColor = "";
+        knappPrisEl.style.backgroundColor = "";
     }
 
 
@@ -231,18 +309,18 @@ var lokalKundeInfo = {};
         console.log("Lagt til i handlevogn");
     }
 
-    //En lyttefunksjon som viser varene i handlevognen i en tabell, settes derfor inn i <tr> elementer
+    //En lyttefunksjon som lytter på handlevogndatabasen viser varene i handlevognen i en tabell, settes derfor inn i <tr> elementer
     function visHandlevogn(snapshot){
         var vareNavn = snapshot.val().vare;
+        //henter informasjon fra den lokale kundedatabasen ved å bruke navnet til varen som en fremmednøkkel
         var pris = lokalVareInfo[vareNavn].pris;
-        //henter informasjon fra den lokale kundedatabasen ved å bruke primærnøklen til varen
         var ingredienser = lokalVareInfo[vareNavn].ingredienser;
 
         handlevognEl.innerHTML += `
 <tr>
      <td><img src="Bilder/logo${vareNavn}.png" alt="Vare"></td>
      <td>${vareNavn}</td>
-     <td>${ingredienser}</td>
+     <td class="fjernElementTabell">${ingredienser}</td>
      <td>${pris}</td>
 </tr>
         `;
@@ -251,37 +329,54 @@ var lokalKundeInfo = {};
 
 
         console.log("Viser en vare i handlevognen");
-        handlevognTabell.style.display = "table"; //viser handlevognen som i CSS filen har display: none;
-        handlevognOverskrift.style.display = "block"; //viser overskriften som i CSS filen har display: none;
+        //viser handlevognen som i CSS filen har display: none; ved å endre til display: grid;
+        handlevognTabell.style.display = "table";
+        //viser overskriften som i CSS filen har display: none; ved å endre til display: block;
+        handlevognOverskrift.style.display = "block";
+        //viser skjemaet som registrerer kunder som i CSS filen har display: none; ved å endre til display: block;
         registreringKundeKontainer.style.display = "block";
-        //viser skjemaet som registrerer kunder som i CSS filen har display: none;
+
 
     }
 
-    //en lyttefunksjon som Tømmer handlevognen, og som setter display: none; til flere elementer, slik at de ikke vises fordi handlevognen er tom.
+    //en funksjon som Tømmer handlevognen, og som setter display: none; til flere elementer, slik at de ikke vises fordi handlevognen er tom.
     function tomHandleVogn() {
-        handlevognDatabase.remove(); //tømmer handlevogndatabasen
+        //tømmer handlevogndatabasen
+        handlevognDatabase.remove();
 
         console.log("Tømte handlekurv");
 
-        handlevognEl.innerHTML = ""; //Tømmer handlevogn elementet i html
-        kvitteringVareEl.innerHTML = ""; //Fjerner varene i kvitteringen i html
+        //Tømmer handlevogn elementet i html
+        handlevognEl.innerHTML = "";
+        //skjule varene i kvitteringen i html
+        kvitteringVareEl.innerHTML = "";
 
+
+        //skjule overskrivften og tabellen til handlevognen ved å endre til display: block;
         handlevognTabell.style.display = "none";
         handlevognOverskrift.style.display = "none";
+        //skjule skjemaet som registrerer kunder ved å endre til display: block;
         registreringKundeKontainer.style.display = "none";
+        //skjuler kvitteringen fra ved å endre til display: block;
         kvitteringEl.style.display = "none";
 
+        //viser varene og knappene som sorterer varene, som blir skjult når kvitteringen vises
         varerInp.style.display = "grid";
         knapperEl.style.display = "grid";
 
-        navKnappEl.innerHTML = `Tøm handlevogn`;    //Endrer navnet på knappen i navbaren tilbake til "tøm handlevogn"
+        //Endrer navnet på knappen i navbaren tilbake til "tøm handlevogn"
+        navKnappEl.innerHTML = `Tøm handlevogn`;
+
+        //Fjerner innholdet i inputfeltene i skjemaet
+        navnInp.value = "";
+        adresseInp.value = "";
+        telefonInp.value = "";
 
     }
 
 
 
-    //en lyttefunksjon som registrerer kundene med deres navn og opplysniger
+    //en lyttefunksjon som registrerer kundene med deres navn og opplysniger når skjemaet blir sendt
     function registrerKunder(event) {
     event.preventDefault();
 
@@ -300,12 +395,22 @@ var lokalKundeInfo = {};
             "telefonnummer": telefon
         }
     );
-    kvitteringEl.style.display = "grid";
+
     //endrer css til kvittering div-elementet slik at det vises, bruker grid til å vise det slik
+    kvitteringEl.style.display = "grid";
+
+    //skjuler elenentene fra nettsiden ved å sette display: none;
     varerInp.style.display = "none";
     knapperEl.style.display = "none";
 
-    navKnappEl.innerHTML = `Ny handel`; //Endrer navnet på knappen i navbaren til "ny handel"
+    //Endrer navnet på knappen i navbaren til "ny handel"
+    navKnappEl.innerHTML = `Ny handel`;
+
+    //Skjuler ovreskriften og tabellen til handlevognen med display: none;
+    handlevognTabell.style.display = "none";
+    handlevognOverskrift.style.display = "none";
+    //Skuler skjemaet der kunden kan registrere seg med display: none;
+    registreringKundeKontainer.style.display = "none";
     }
 
     //lyttefunksjon som lytter til kundedatabasen, og som insetter navnene til kundene som i option-elementer i selektoren
@@ -317,14 +422,16 @@ var lokalKundeInfo = {};
         <option value="${kundeNavn}">${kundeNavn}</option>
         `;
 
-        lokalKundeInfo[kundeNavn] = kundeInfo; //lager en lokal database som inneholder informasjonen til kundene
+
+        //lager en lokal database som inneholder informasjonen til kundene
+        lokalKundeInfo[kundeNavn] = kundeInfo;
 
         console.log("Kunde lagt til i selector");
     }
 
 
 
-    //En lyttefunksjon som kjører når informasjon blir lagt til kunder databasen, og viser informasjonen
+    //En lyttefunksjon som kjører lytter på kundedabasen som viser informasjonen
     function visKvitteringKunde(snapshot) {
         var navnEn = snapshot.key;
         var kundeinformasjonEn = snapshot.val();
@@ -337,16 +444,11 @@ var lokalKundeInfo = {};
 
         console.log("Viser kundeinfo fra Skjema");
 
-        handlevognEl.innerHTML = ""; //Tømmer handlevogn elementet i html
-        handlevognDatabase.remove(); //tømmer handlevogndatabasen
-        handlevognTabell.style.display = "none";
-        handlevognOverskrift.style.display = "none";
-        registreringKundeKontainer.style.display = "none";
 
 
     }
 
-    //Den andre lyttefunksjonen som kjører når informasjon blir lagt til den midlertidige kundedatabasen, og viser informasjonen
+    //Den andre lyttefunksjonen som registrerer kjører når skjemaet med rullegardinmenyen blir registrert, og viser informasjonen
     function visKvitteringKundeTo(event) {
         event.preventDefault();
         var kundeNavnTo = kundeSelector.value;
@@ -362,22 +464,27 @@ var lokalKundeInfo = {};
 
         console.log("Viser kundeinfo fra selector");
 
-        handlevognEl.innerHTML = ""; //Tømmer handlevogn elementet i html
-        handlevognDatabase.remove(); //tømmer handlevogndatabasen
-        handlevognTabell.style.display = "none";
-        handlevognOverskrift.style.display = "none";
-        registreringKundeKontainer.style.display = "none";
+        //endrer css til kvittering div-elementet slik at det vises, bruker grid til å vise det slik
+        kvitteringEl.style.display = "grid";
+
+        //skjuler elenentene fra nettsiden ved å sette display: none;
         varerInp.style.display = "none";
         knapperEl.style.display = "none";
-        kvitteringEl.style.display = "grid";
-        navKnappEl.innerHTML = `Ny handel`; //Endrer navnet på knappen i navbaren til "ny handel"
+
+        //Endrer navnet på knappen i navbaren til "ny handel"
+        navKnappEl.innerHTML = `Ny handel`;
+
+        //Skjuler ovreskriften og tabellen til handlevognen med display: none;
+        handlevognTabell.style.display = "none";
+        handlevognOverskrift.style.display = "none";
+        //Skuler skjemaet der kunden kan registrere seg med display: none;
+        registreringKundeKontainer.style.display = "none";
 
     }
 
     //Lyttefunksjon som hører på handlekurvdatabasen, viser varene i kvitteringen
     function visKvitteringVarer(snapshot){
-        var vareInfo = snapshot.val();
-        var vareNavn = vareInfo.vare;
+        var vareNavn = snapshot.val().vare;
         var pris = lokalVareInfo[vareNavn].pris; //bruker den lokale databasen, varenavnet er fremmednøkkelen
         var bilde = lokalVareInfo[vareNavn].bilde;
         var kategori = lokalVareInfo[vareNavn].kategori;
@@ -386,7 +493,7 @@ var lokalKundeInfo = {};
 <tr>
      <td><img src="${bilde}" alt="Vare"></td>
      <td>${vareNavn}</td>
-     <td>${kategori}</td>
+     <td class="fjernElementTabell">${kategori}</td>
      <td>${pris}</td>
 </tr>
         `;
@@ -409,6 +516,7 @@ var lokalKundeInfo = {};
 //Når det blir lagt til informasjon til kundedatabasen kjører bege funkjsonene, den ene viser kundeinformasjonen i kvitteringen, mens
 //Den andre legger til options/valgmuligheter i selectoren der man kan velge blandt tidligere kunder
     kunderDatabase.on("child_added", visKvitteringKunde);
+    kunderDatabase.on("child_changed", visKvitteringKunde);
     kunderDatabase.on("child_added", hentKunde);
 
 //Når det blir sendt informasjon til den midlertidige databasen vil informasjonen til kunden vises i kvitteringen

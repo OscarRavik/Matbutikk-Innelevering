@@ -4,6 +4,8 @@
     padding:0;
     Font-family:sans-serif;
 }
+
+/* endrer css til alle overskrifter*/
 h1 {
     text-align: center;
     font-size: 40px;
@@ -15,7 +17,9 @@ h2 {
 }
 h3 {
     text-align: center;
+    margin: 15px;
 }
+
 
 html {
     height: 100%;
@@ -26,6 +30,8 @@ body {
     display: flex;
     flex-direction: column;
 }
+
+/* endrer css til alle knapper på nettsiden */
 button {
     background-color: #f3f3f3;
     border: 1px darkgray solid;
@@ -34,6 +40,8 @@ button:hover {
     background-color: #d9d9d9;
 }
 
+
+/* css til navbar og elementer i den */
 nav {
     height: 100px;
     background-color: #4468B0;
@@ -45,8 +53,6 @@ nav {
     grid-template-columns: 100px 1fr 100px;
     border-bottom: solid 1px black;
 }
-
-
 
 nav img {
     width: 70px;
@@ -60,6 +66,13 @@ nav button {
     margin-right: 20px;
 }
 
+nav h1 {
+    margin: 0;
+    line-height: 100px;
+}
+
+
+/* css til main og alle elementer i main */
 main{
     padding: 140px 40px 40px 40px;
     background-color: #e3e3e3;
@@ -69,6 +82,7 @@ main button, main select {
     border-radius: 5px;
 }
 
+/* css til knappene i knapperekka som endrer sorteringen av varer */
 #knapper {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -77,9 +91,12 @@ main button, main select {
 }
 #knapper button {
     border-radius: 0;
-    border-left: none;
+    /* forhindrer at man får doble borders ved å fjerne den til høyre*/
+    border-right: none;
 }
-#knapper button:first-child {
+
+/* gjør at den siste knappen får border rundt hele ved å legge til en border til høyre */
+#knapper button:last-child {
     border: 1px solid darkgray;
 }
 
@@ -87,7 +104,7 @@ main button, main select {
 
 
 
-
+/* endrer css til div-elementet som varene legges til i */
 #varerInp {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -117,19 +134,20 @@ main button, main select {
 }
 
 
-#handlevognOverskrift {
-    display: none;
-}
+/* Endrer css til elementene som viser handlevognen */
 #handlevogn {
     width: 100%;
     border-collapse: collapse;
     display: none;
 }
+
+/*gjør at det blir dannet en scrollbar når høyden til handlevognDiv blir høyere enn 378 px */
 #handlevognDiv {
     max-height: 378px;
     overflow: auto;
 }
 
+/* gjør av annenhver tablerow får en annen backgrunnsfarge */
 #handlevogn tbody tr:nth-child(odd){
     background-color: darkgray;
 }
@@ -137,12 +155,12 @@ main button, main select {
     border: none;
 }
 
-
 #handlevogn img{
     width: 50px;
 }
 
 
+/* endrer css til skjemaene som registrerer kunden */
 #registreringKunde {
     display: none;
 }
@@ -165,6 +183,7 @@ main button, main select {
 }
 
 
+/* Endrer css til elementene som viser kvitteringen */
 #kvittering {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -189,11 +208,14 @@ main button, main select {
     background-color: darkgray;
 }
 
+/* gjør at det blir dannet en scrollbar når lengden til varekvitteringtabellen (#scroll) blir lengre enn 324 px */
 #scroll {
     max-height: 324px;
     overflow: auto;
 }
 
+
+/* endrer css til footer */
 footer {
     background-color: #4468B0;
     height: 40px;
@@ -209,6 +231,7 @@ footer p{
 }
 
 
+/* span classer til elementer i grid */
 .span2 {
     grid-column: span 2;
 }
@@ -217,6 +240,7 @@ footer p{
 }
 
 
+/* endrer css basert på bredden til nettleseren */
 @media (max-width: 1100px) {
     #varerInp {
         grid-template-columns: repeat(3, 1fr);
@@ -235,6 +259,11 @@ footer p{
         grid-template-columns: 1fr;
         height: 200px;
     }
+    /* Endrer så knappene fortsatt har border rundt hele */
+    #knapper button {
+        border: solid darkgray 1px;
+        border-bottom: 0;
+    }
     .span1 {
         grid-column: span 2;
     }
@@ -243,6 +272,10 @@ footer p{
     }
     nav {
         grid-template-columns: 1fr 100px;
+    }
+    /* gjør at ingrediensene til varene ikke vises i handlevogntabellen når nettsiden blir smal */
+    .fjernElementTabell {
+        display: none;
     }
 }
 
