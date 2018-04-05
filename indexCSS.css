@@ -35,10 +35,13 @@ body {
 button {
     background-color: #f3f3f3;
     border: 1px darkgray solid;
+    transition: 0.5s;
 }
 button:hover {
     background-color: #d9d9d9;
 }
+button:focus {outline:0;}
+
 
 
 /* css til navbar og elementer i den */
